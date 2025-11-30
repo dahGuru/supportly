@@ -2,7 +2,11 @@ import { Pool } from 'pg';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// FIX: Enable SSL for Cloud Databases (Render/Railway)
+const pool = new Pool({ 
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -26,12 +30,13 @@ export default async function handler(req, res) {
     );
     await client.query('COMMIT');
 
-    // 3. Return Token AND Tenant ID (This was missing before)
+    // 3. Generate Token
     const token = jwt.sign({ userId: userRes.rows[0].id, tenantId }, process.env.JWT_SECRET);
     
-    res.status(201).json({ token, tenantId }); // <--- Fixed here
+    res.status(201).json({ token, tenantId });
   } catch (e) {
     await client.query('ROLLBACK');
+    console.error('Signup Error:', e); // Log the real error to Vercel logs
     res.status(500).json({ error: e.message });
   } finally {
     client.release();

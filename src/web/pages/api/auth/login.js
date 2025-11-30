@@ -2,7 +2,11 @@ import { Pool } from 'pg';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// FIX: Enable SSL
+const pool = new Pool({ 
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -25,6 +29,7 @@ export default async function handler(req, res) {
 
     res.json({ token });
   } catch (e) {
+    console.error('Login Error:', e);
     res.status(500).json({ error: e.message });
   } finally {
     client.release();
