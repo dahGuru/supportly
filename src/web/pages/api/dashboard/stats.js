@@ -1,16 +1,20 @@
 import { Pool } from 'pg';
 import jwt from 'jsonwebtoken';
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// FIX: Enable SSL for Cloud Database
+const pool = new Pool({ 
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 
 export default async function handler(req, res) {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).end();
 
+  const client = await pool.connect();
+
   try {
     const { tenantId } = jwt.verify(token, process.env.JWT_SECRET);
-    
-    const client = await pool.connect();
     
     // 1. Get Bots
     const botsRes = await client.query('SELECT * FROM bots WHERE tenant_id = $1', [tenantId]);
@@ -26,9 +30,11 @@ export default async function handler(req, res) {
       [tenantId]
     );
 
-    client.release();
     res.json({ bots: botsRes.rows, conversations: convRes.rows });
   } catch (e) {
+    console.error("Dashboard API Error:", e);
     res.status(500).json({ error: e.message });
+  } finally {
+    client.release();
   }
 }
