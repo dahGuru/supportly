@@ -86,9 +86,9 @@ export default function Dashboard() {
                         Tenant ID: {bot.tenant_id}
                       </div>
                     </div>
-                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                    {/* <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
                       Active
-                    </span>
+                    </span> */}
                     <div className="flex gap-2">
                       <Link
                         href={`/bots/${bot.id}/settings`}
