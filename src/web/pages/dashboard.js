@@ -91,14 +91,22 @@ export default function Dashboard() {
                     </span> */}
                     <div className="flex gap-2">
                       <Link
+                        href={`/bots/${bot.id}/training`}
+                        className="text-sm bg-green-100 text-green-800 border border-green-200 px-3 py-1 rounded hover:bg-green-200"
+                      >
+                        Train
+                      </Link>
+
+                      <Link
                         href={`/bots/${bot.id}/settings`}
-                        className="text-sm border px-2 py-1 rounded hover:bg-white"
+                        className="text-sm border border-gray-300 px-3 py-1 rounded hover:bg-white"
                       >
                         Settings
                       </Link>
+
                       <Link
                         href={`/bots/${bot.id}/install`}
-                        className="text-sm bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700"
+                        className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 shadow-sm"
                       >
                         Install
                       </Link>
