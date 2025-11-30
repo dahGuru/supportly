@@ -4,9 +4,9 @@
 
   const API_URL = "http://localhost:3000/api/widget-auth";
   // const WS_URL = 'ws://localhost:4000';
-  const WS_URL = isLocal
-    ? "ws://localhost:4000"
-    : "wss://supportly-server.onrender.com"; // Your Render Server URL
+  const WS_URL = isLocal 
+  ? 'ws://localhost:4000'
+  : 'wss://supportly-server.onrender.com'; // My Render Server URL
 
   // 1. Inject CSS
   const style = document.createElement("style");
